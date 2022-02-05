@@ -11,8 +11,27 @@ body{
 
 .snake-dot{
   position: absolute;
-  width:2%;
-  height: 2%;
-  background-color: green;
+  width:5%;
+  height: 5%;
+  background: url('./assests/snakeBody.png');
+  background-size: cover;
+  border: 1px solid #fff;
+}
+.snake-dot-head{
+  position: absolute;
+  width:5%;
+  height: 5%;
+  background: url('./assests/snakeHead.png');
+  background-size: cover;
+  border: 1px solid #fff;
+}
+
+
+.snake-food{
+  position: absolute;
+  width:5%;
+  height: 5%;
+  background-color: rgb(240, 60, 60);
+  background-size: cover;
   border: 1px solid #fff;
 }
