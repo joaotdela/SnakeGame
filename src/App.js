@@ -3,6 +3,15 @@ import './index.css';
 import Snake from './Snake';
 import Food, { getRandomCoordinates } from './Food';
 
+const initialState = {
+  food: getRandomCoordinates(),
+  speed: 350,
+  direction: 'RIGHT',
+  snakeDots: [
+    [0, 0],
+    [5, 0]
+  ]
+}
 
 class App extends Component {
   state = {
@@ -18,7 +27,9 @@ class App extends Component {
     setInterval(this.moveSnake, this.state.speed);
     document.onkeydown = this.onKeyDown;
   }
-
+  componentDidUpdate() {
+    this.checkIfOutBorders()
+  }
   onKeyDown = (e) => {
     e = e || window.event;
     switch (e.keyCode) {
@@ -39,7 +50,6 @@ class App extends Component {
   moveSnake = () => {
     let dots = [...this.state.snakeDots];
     let head = dots[dots.length - 1];
-
     switch (this.state.direction) {
       case 'RIGHT':
         head = [head[0] + 5, head[1]];
@@ -57,12 +67,29 @@ class App extends Component {
     dots.push(head);
     dots.shift();
     this.setState({
-      snakeDots: dots
+      snakeDots: dots,
     })
   }
-
-
-
+  checkIfOutBorders() {
+    let head = this.state.snakeDots[this.state.snakeDots.length - 1];
+    if (head[0] >= 100 || head[1] >= 100 || head[0] < 0 || head[1] < 0) {
+      this.GameOver();
+    }
+  }
+  checkCollapsed() {
+    let snake = [...this.state.snakeDots];
+    let head = snake[snake.length - 1];
+    snake.pop();
+    snake.forEach(dot => {
+      if (head[0] == dot[0] && head[1] == dot[1]) {
+        this.GameOver()
+      }
+    })
+  }
+  GameOver() {
+    alert('You lose')
+    this.setState(initialState)
+  }
 
   render() {
     return (
