@@ -1,7 +1,15 @@
 import React, { Component } from 'react'
 import './index.css';
 import Snake from './Snake';
-import Food, { getRandomCoordinates } from './Food';
+import Food from './Food';
+
+const getRandomCoordinates = () => {
+  let min = 1;
+  let max = 98;
+  let x = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 2;
+  let y = Math.floor((Math.random() * (max - min + 1) + 1) / 2) * 2;
+  return [x, y]
+}
 
 const initialState = {
   food: getRandomCoordinates(),
@@ -14,21 +22,18 @@ const initialState = {
 }
 
 class App extends Component {
-  state = {
-    food: getRandomCoordinates(),
-    speed: 350,
-    direction: 'RIGHT',
-    snakeDots: [
-      [0, 0],
-      [5, 0]
-    ]
-  }
+
+  state = initialState;
+
   componentDidMount() {
     setInterval(this.moveSnake, this.state.speed);
     document.onkeydown = this.onKeyDown;
   }
+
   componentDidUpdate() {
-    this.checkIfOutBorders()
+    this.checkIfOutBorders();
+    this.checkIfCollapsed();
+    this.checkIfEat();
   }
   onKeyDown = (e) => {
     e = e || window.event;
@@ -47,6 +52,7 @@ class App extends Component {
         break;
     }
   }
+
   moveSnake = () => {
     let dots = [...this.state.snakeDots];
     let head = dots[dots.length - 1];
@@ -67,7 +73,7 @@ class App extends Component {
     dots.push(head);
     dots.shift();
     this.setState({
-      snakeDots: dots,
+      snakeDots: dots
     })
   }
   checkIfOutBorders() {
@@ -76,7 +82,7 @@ class App extends Component {
       this.GameOver();
     }
   }
-  checkCollapsed() {
+  checkIfCollapsed() {
     let snake = [...this.state.snakeDots];
     let head = snake[snake.length - 1];
     snake.pop();
@@ -84,6 +90,23 @@ class App extends Component {
       if (head[0] == dot[0] && head[1] == dot[1]) {
         this.GameOver()
       }
+    })
+  }
+  checkIfEat() {
+    let head = this.state.snakeDots[this.state.snakeDots.length - 1];
+    let food = this.state.food;
+    if (head[0] == food[0] && head[1] == food[1]) {
+      this.setState({
+        food: getRandomCoordinates()
+      })
+      this.enlargeSnake();
+    }
+  }
+  enlargeSnake() {
+    let newSnake = [...this.state.snakeDots];
+    newSnake.unshift([]);
+    this.setState({
+      snakeDots: newSnake
     })
   }
   GameOver() {
